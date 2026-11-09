@@ -1,0 +1,36 @@
+name: Quitegood - upload local macOS arm64 build
+
+# The macOS Apple Silicon client is built locally (GitHub has no arm64 macOS runner for this
+# account). Pushing a branch `qg-mac-arm` that contains dist/QuitegoodSupport-macOS-AppleSilicon.dmg
+# replaces that file in the latest release, and stores it in the qg-build pre-release so later
+# publishes reuse it instead of the Intel fallback.
+
+on:
+  push:
+    branches: ["qg-mac-arm"]
+
+permissions:
+  contents: write
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Upload
+        run: |
+          set -euo pipefail
+          F=dist/QuitegoodSupport-macOS-AppleSilicon.dmg
+          test -s "$F"
+          sha256sum "$F"
+          LATEST=$(gh release view -R "$GITHUB_REPOSITORY" --json tagName -q .tagName)
+          gh release upload "$LATEST" "$F" -R "$GITHUB_REPOSITORY" --clobber
+          cp "$F" rustdesk-local-aarch64.dmg
+          gh release upload qg-build rustdesk-local-aarch64.dmg -R "$GITHUB_REPOSITORY" --clobber
+          gh release download "$LATEST" -R "$GITHUB_REPOSITORY" -p 'QuitegoodSupport-*' -D chk
+          (cd chk && sha256sum QuitegoodSupport-* > SHA256SUMS.txt && cat SHA256SUMS.txt)
+          gh release upload "$LATEST" chk/SHA256SUMS.txt -R "$GITHUB_REPOSITORY" --clobber
+          gh release edit "$LATEST" -R "$GITHUB_REPOSITORY" \
+            --notes "Client RustDesk Quitegood (support.quitegood.be, WebSocket/443). macOS Apple Silicon: native arm64 build made locally (commit ${GITHUB_SHA}). Source: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"

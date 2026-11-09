@@ -32,6 +32,9 @@ jobs:
           cp rustdesk-*-x86_64.dmg ../QuitegoodSupport-macOS-Intel.dmg
           if ls rustdesk-*-aarch64.dmg >/dev/null 2>&1; then
             cp rustdesk-*-aarch64.dmg ../QuitegoodSupport-macOS-AppleSilicon.dmg
+          elif ls rustdesk-local-aarch64.dmg >/dev/null 2>&1; then
+            cp rustdesk-local-aarch64.dmg ../QuitegoodSupport-macOS-AppleSilicon.dmg
+            NOTE="Note: the Apple Silicon file is the last native arm64 build made locally (quitegood/mac/build-arm.sh); it may be older than the other files."
           else
             cp rustdesk-*-x86_64.dmg ../QuitegoodSupport-macOS-AppleSilicon.dmg
             NOTE="Note: the Apple Silicon file is the Intel build (runs through Rosetta 2) until a native arm64 build is available."
