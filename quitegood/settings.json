@@ -7,7 +7,9 @@
     "allow-websocket": "Y",
     "disable-udp": "Y",
     "hide-server-settings": "Y",
-    "hide-websocket-settings": "Y"
+    "hide-websocket-settings": "Y",
+    "allow-auto-update": "N",
+    "enable-check-update": "N"
   },
   "default-settings": {
     "verification-method": "use-temporary-password",
