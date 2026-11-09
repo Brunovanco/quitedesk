@@ -67,7 +67,7 @@ assert n == 1, "windows arm64 matrix entry not found"
 # macOS arm64: the macos-15 arm pool is often out of capacity for free accounts; macos-14 is
 # Apple Silicon too and usually available. Override with QG_MAC_ARM_RUNNER if needed.
 import os
-mac_arm = os.environ.get("QG_MAC_ARM_RUNNER", "macos-14")
+mac_arm = os.environ.get("QG_MAC_ARM_RUNNER", "macos-15")
 res, n = re.subn(r"(target: aarch64-apple-darwin,\n\s+os: )macos-15,", r"\g<1>" + mac_arm + ",", res, count=1)
 assert n == 1, "macOS arm64 runner entry not found"
 # publish_unsigned expects the sciter build: it is disabled anyway (if: false above)
