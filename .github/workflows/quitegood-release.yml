@@ -5,7 +5,7 @@ name: Quitegood - release client
 #   https://github.com/<owner>/<repo>/releases/latest/download/QuitegoodSupport-Windows.exe
 #   https://github.com/<owner>/<repo>/releases/latest/download/QuitegoodSupport-macOS-AppleSilicon.dmg
 #   https://github.com/<owner>/<repo>/releases/latest/download/QuitegoodSupport-macOS-Intel.dmg
-# Requires the repository variable QG_SERVER_KEY (public key of hbbs, id_ed25519.pub).
+# Server key: quitegood/settings.json (optional override: repository variable QG_SERVER_KEY).
 
 on:
   workflow_dispatch:

@@ -3,7 +3,7 @@
     "custom-rendezvous-server": "support.quitegood.be",
     "relay-server": "support.quitegood.be",
     "api-server": "https://support.quitegood.be",
-    "key": "__QG_SERVER_KEY__",
+    "key": "8ektehbfWuiZj0Eu7Inx+fwInteP5YvxUpY5Zm33K4E=",
     "allow-websocket": "Y",
     "disable-udp": "Y",
     "hide-server-settings": "Y",

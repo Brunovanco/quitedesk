@@ -191,15 +191,12 @@ jobs:
         env:
           QG_SERVER_KEY: ${{ vars.QG_SERVER_KEY }}
         run: |
-          if [ -z "$QG_SERVER_KEY" ]; then echo "::error::Repository variable QG_SERVER_KEY is empty"; exit 1; fi
-          python3 - <<'PY'
-          import os, pathlib
-          p = pathlib.Path("quitegood/settings.json")
-          s = p.read_text()
-          assert "__QG_SERVER_KEY__" in s
-          p.write_text(s.replace("__QG_SERVER_KEY__", os.environ["QG_SERVER_KEY"].strip()))
-          PY
-          grep -c '"key"' quitegood/settings.json
+          # Optional override of the key committed in quitegood/settings.json (repository variable)
+          if [ -n "$QG_SERVER_KEY" ]; then
+            python3 -c "import json,os,pathlib;p=pathlib.Path('quitegood/settings.json');d=json.loads(p.read_text());d['override-settings']['key']=os.environ['QG_SERVER_KEY'].strip();p.write_text(json.dumps(d,indent=2))"
+          fi
+          if grep -q "__QG_SERVER_KEY__" quitegood/settings.json; then echo "::error::server key missing"; exit 1; fi
+          python3 -c "import json;print('server key:', json.load(open('quitegood/settings.json'))['override-settings']['key'])"
 
       - name: Restore bridge files
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -965,15 +962,12 @@ jobs:
         env:
           QG_SERVER_KEY: ${{ vars.QG_SERVER_KEY }}
         run: |
-          if [ -z "$QG_SERVER_KEY" ]; then echo "::error::Repository variable QG_SERVER_KEY is empty"; exit 1; fi
-          python3 - <<'PY'
-          import os, pathlib
-          p = pathlib.Path("quitegood/settings.json")
-          s = p.read_text()
-          assert "__QG_SERVER_KEY__" in s
-          p.write_text(s.replace("__QG_SERVER_KEY__", os.environ["QG_SERVER_KEY"].strip()))
-          PY
-          grep -c '"key"' quitegood/settings.json
+          # Optional override of the key committed in quitegood/settings.json (repository variable)
+          if [ -n "$QG_SERVER_KEY" ]; then
+            python3 -c "import json,os,pathlib;p=pathlib.Path('quitegood/settings.json');d=json.loads(p.read_text());d['override-settings']['key']=os.environ['QG_SERVER_KEY'].strip();p.write_text(json.dumps(d,indent=2))"
+          fi
+          if grep -q "__QG_SERVER_KEY__" quitegood/settings.json; then echo "::error::server key missing"; exit 1; fi
+          python3 -c "import json;print('server key:', json.load(open('quitegood/settings.json'))['override-settings']['key'])"
 
       - name: Import the codesign cert
         if: env.MACOS_P12_BASE64 != null
