@@ -79,6 +79,8 @@ if want src && ! is_done src; then
   gsed -i -e "s/platform :osx, '.*'/platform :osx, '${MIN_MACOS}'/" flutter/macos/Podfile
   gsed -i -e "s/osx_minimum_system_version = \"[0-9]*.[0-9]*\"/osx_minimum_system_version = \"${MIN_MACOS}\"/" Cargo.toml
   gsed -i -e "s/MACOSX_DEPLOYMENT_TARGET = [0-9]*.[0-9]*;/MACOSX_DEPLOYMENT_TARGET = ${MIN_MACOS};/" flutter/macos/Runner.xcodeproj/project.pbxproj
+  # Xcode 26+ refuses pod targets below macOS 12: force every pod to MIN_MACOS
+  grep -q "QG_MIN_MACOS" flutter/macos/Podfile || gsed -i -e "s/    flutter_additional_macos_build_settings(target)/    flutter_additional_macos_build_settings(target)\n    target.build_configurations.each { |c| c.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '${MIN_MACOS}' } # QG_MIN_MACOS/" flutter/macos/Podfile
   grep -q '"key": "__QG_SERVER_KEY__"' quitegood/settings.json && { echo "server key missing"; exit 6; }
   done_ src
 fi
@@ -118,7 +120,11 @@ if want build && ! is_done build; then
   cd "$B/src"
   export MACOSX_DEPLOYMENT_TARGET=$MIN_MACOS
   rustup override set $MAC_RUST_VERSION
-  python3 ./build.py --flutter --hwcodec --unix-file-copy-paste --screencapturekit
+  grep -q "QG_MIN_MACOS" flutter/macos/Podfile || gsed -i -e "s/    flutter_additional_macos_build_settings(target)/    flutter_additional_macos_build_settings(target)\n    target.build_configurations.each { |c| c.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '${MIN_MACOS}' } # QG_MIN_MACOS/" flutter/macos/Podfile
+  grep -n -A2 "flutter_additional_macos_build_settings(target)" flutter/macos/Podfile
+  # cargo part already built? skip it on re-runs
+  SKIP=""; [ -f target/release/liblibrustdesk.dylib ] && [ -f "$B/.done/cargo" ] && SKIP="--skip-cargo"
+  python3 ./build.py --flutter --hwcodec --unix-file-copy-paste --screencapturekit $SKIP || { [ -f target/release/liblibrustdesk.dylib ] && touch "$B/.done/cargo"; exit 8; }
   ls -la flutter/build/macos/Build/Products/Release/RustDesk.app/Contents/MacOS/
   done_ build
 fi
@@ -132,8 +138,7 @@ if want dmg && ! is_done dmg; then
   # ad-hoc signature so the bundle is consistent (no Developer ID available)
   codesign --force --deep -s - "$APP" || true
   rm -f "$B/QuitegoodSupport-macOS-AppleSilicon.dmg"
-  create-dmg --volname "Quitegood Support" --icon "RustDesk.app" 200 190 --hide-extension "RustDesk.app" \
-     --window-size 800 400 --app-drop-link 600 185 "$B/QuitegoodSupport-macOS-AppleSilicon.dmg" "$APP"
+  create-dmg --skip-jenkins --volname "Quitegood Support" --app-drop-link 600 185 "$B/QuitegoodSupport-macOS-AppleSilicon.dmg" "$APP"
   shasum -a 256 "$B/QuitegoodSupport-macOS-AppleSilicon.dmg"
   done_ dmg
 fi
