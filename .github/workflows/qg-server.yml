@@ -21,14 +21,17 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Toolchain
         run: |
-          sudo apt-get update -y && sudo apt-get install -y musl-tools
           rustup toolchain install stable --profile minimal
-          rustup target add x86_64-unknown-linux-musl
+          cargo install cross --locked --version 0.2.5
       - name: Build
         run: |
-          cargo build --release --locked --target x86_64-unknown-linux-musl --bin hbbs
+          set -o pipefail
+          if ! cross build --release --locked --target x86_64-unknown-linux-musl --bin hbbs 2>&1 | tee build.log; then
+            grep -E "^error|error:|cannot find|undefined reference|failed to run" build.log | head -25 | while read -r l; do echo "::error::$l"; done
+            exit 1
+          fi
           B=target/x86_64-unknown-linux-musl/release/hbbs
-          file $B; ldd $B || true
+          file $B
           cp $B hbbs-x86_64-musl && sha256sum hbbs-x86_64-musl | tee hbbs-x86_64-musl.sha256
       - name: Publish
         run: |
