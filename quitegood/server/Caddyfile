@@ -1,0 +1,23 @@
+support.quitegood.be {
+	encode gzip
+
+	# RustDesk rendezvous (hbbs) over WebSocket
+	handle /ws/id {
+		reverse_proxy 127.0.0.1:21118
+	}
+	# RustDesk relay (hbbr) over WebSocket - long-lived sessions
+	handle /ws/relay {
+		reverse_proxy 127.0.0.1:21119 {
+			flush_interval -1
+			stream_timeout 24h
+		}
+	}
+	# OSS server has no API: answer the client's API calls quietly
+	handle /api/* {
+		respond 404
+	}
+	# Anything else: send people to the download page
+	handle {
+		redir https://www.quitegood.be/support 302
+	}
+}

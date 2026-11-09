@@ -2506,7 +2506,20 @@ pub fn rustdesk_interval(i: Interval) -> ThrottledInterval {
     ThrottledInterval::new(i)
 }
 
+/// Quitegood: settings baked into the binary at build time (see `quitegood/settings.json`).
+/// Applied before any signed `custom.txt`, without signature check, because they are part of
+/// this fork's own source.
+const QUITEGOOD_SETTINGS: &str = include_str!("../quitegood/settings.json");
+
+fn load_quitegood_settings() {
+    match serde_json::from_str::<HashMap<String, serde_json::Value>>(QUITEGOOD_SETTINGS) {
+        Ok(data) => apply_custom_client_data(data),
+        Err(e) => log::error!("Failed to parse built-in Quitegood settings: {}", e),
+    }
+}
+
 pub fn load_custom_client() {
+    load_quitegood_settings();
     #[cfg(debug_assertions)]
     if let Ok(data) = std::fs::read_to_string("./custom.txt") {
         read_custom_client(data.trim());
@@ -2618,13 +2631,16 @@ pub fn read_custom_client(config: &str) {
         log::error!("Failed to dec custom client config");
         return;
     };
-    let Ok(mut data) =
+    let Ok(data) =
         serde_json::from_slice::<std::collections::HashMap<String, serde_json::Value>>(&data)
     else {
         log::error!("Failed to parse custom client config");
         return;
     };
+    apply_custom_client_data(data);
+}
 
+fn apply_custom_client_data(mut data: HashMap<String, serde_json::Value>) {
     if let Some(app_name) = data.remove("app-name") {
         if let Some(app_name) = app_name.as_str() {
             *config::APP_NAME.write().unwrap() = app_name.to_owned();

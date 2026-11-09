@@ -1,0 +1,35 @@
+# Quitegood Support - RustDesk OSS server behind Caddy, clients use only TCP 443 (WebSocket/TLS).
+# Public ports: 443 (clients) and 80 (Let's Encrypt HTTP challenge + redirect). Nothing else.
+services:
+  hbbs:
+    image: rustdesk/rustdesk-server:latest
+    container_name: hbbs
+    # -r: relay announced to peers; the client turns it into wss://support.quitegood.be/ws/relay
+    # -k _: only clients holding this server's public key may use it
+    command: hbbs -r support.quitegood.be -k _
+    volumes:
+      - ./data:/root
+    ports:
+      - "127.0.0.1:21118:21118"   # WebSocket rendezvous (behind Caddy /ws/id)
+    depends_on: [hbbr]
+    restart: unless-stopped
+
+  hbbr:
+    image: rustdesk/rustdesk-server:latest
+    container_name: hbbr
+    command: hbbr -k _
+    volumes:
+      - ./data:/root
+    ports:
+      - "127.0.0.1:21119:21119"   # WebSocket relay (behind Caddy /ws/relay)
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2
+    container_name: caddy
+    network_mode: host            # reaches 127.0.0.1:21118/21119, listens on 80/443
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy_data:/data
+      - ./caddy_config:/config
+    restart: unless-stopped

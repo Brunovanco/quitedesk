@@ -1,0 +1,16 @@
+{
+  "override-settings": {
+    "custom-rendezvous-server": "support.quitegood.be",
+    "relay-server": "support.quitegood.be",
+    "api-server": "https://support.quitegood.be",
+    "key": "__QG_SERVER_KEY__",
+    "allow-websocket": "Y",
+    "disable-udp": "Y",
+    "hide-server-settings": "Y",
+    "hide-websocket-settings": "Y"
+  },
+  "default-settings": {
+    "verification-method": "use-temporary-password",
+    "temporary-password-length": "8"
+  }
+}
