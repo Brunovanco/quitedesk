@@ -9,6 +9,9 @@ services:
     command: hbbs -r support.quitegood.be -k _
     volumes:
       - ./data:/root
+      # Quitegood hbbs (branch qg-server): adds peer registration over WebSocket, required
+      # for clients that only use TCP 443. Comment out to go back to the stock hbbs.
+      - ./bin/hbbs:/usr/bin/hbbs:ro
     ports:
       - "127.0.0.1:21118:21118"   # WebSocket rendezvous, behind nginx /ws/id
     depends_on: [hbbr]
