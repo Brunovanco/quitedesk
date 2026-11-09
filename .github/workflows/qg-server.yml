@@ -21,13 +21,17 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Toolchain
         run: |
+          sudo apt-get update -y && sudo apt-get install -y musl-tools
           rustup toolchain install stable --profile minimal
-          cargo install cross --locked --version 0.2.5
+          rustup target add x86_64-unknown-linux-musl
       - name: Build
+        env:
+          CC_x86_64_unknown_linux_musl: musl-gcc
         run: |
           set -o pipefail
-          if ! cross build --release --locked --target x86_64-unknown-linux-musl --bin hbbs 2>&1 | tee build.log; then
-            grep -E "^error|error:|cannot find|undefined reference|failed to run" build.log | head -25 | while read -r l; do echo "::error::$l"; done
+          export DATABASE_URL="sqlite://$PWD/db_v2.sqlite3"
+          if ! cargo build --release --locked --target x86_64-unknown-linux-musl --bin hbbs 2>&1 | tee build.log; then
+            grep -E "^error|error:|cannot find|undefined reference|failed to run|note: .*ld" build.log | head -25 | while read -r l; do echo "::error::$l"; done
             exit 1
           fi
           B=target/x86_64-unknown-linux-musl/release/hbbs
