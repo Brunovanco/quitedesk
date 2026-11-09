@@ -26,28 +26,7 @@ jobs:
 
   publish:
     needs: build
-    runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ github.token }}
-    steps:
-      - name: Collect build outputs
-        run: |
-          set -euo pipefail
-          mkdir out && cd out
-          gh release download qg-build -R "$GITHUB_REPOSITORY" -p 'rustdesk-*'
-          ls -l
-          cp rustdesk-*-x86_64.exe   ../QuitegoodSupport-Windows.exe
-          cp rustdesk-*-x86_64.msi   ../QuitegoodSupport-Windows.msi
-          cp rustdesk-*-aarch64.dmg  ../QuitegoodSupport-macOS-AppleSilicon.dmg
-          cp rustdesk-*-x86_64.dmg   ../QuitegoodSupport-macOS-Intel.dmg
-          cd .. && sha256sum QuitegoodSupport-* > SHA256SUMS.txt && cat SHA256SUMS.txt
-
-      - name: Publish as latest release
-        run: |
-          set -euo pipefail
-          TAG="${GITHUB_REF_NAME}"
-          case "$TAG" in qg-v*) ;; *) TAG="qg-$(date -u +%Y%m%d-%H%M)";; esac
-          gh release create "$TAG" -R "$GITHUB_REPOSITORY" --latest \
-            --title "Quitegood Support $TAG" \
-            --notes "Client RustDesk Quitegood (support.quitegood.be, WebSocket/443). Source: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_SHA}" \
-            QuitegoodSupport-* SHA256SUMS.txt
+    # publish whatever was built, even if one platform failed (e.g. no macOS arm64 runner)
+    if: ${{ always() }}
+    uses: ./.github/workflows/quitegood-publish.yml
+    secrets: inherit

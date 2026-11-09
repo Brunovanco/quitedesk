@@ -1,0 +1,49 @@
+name: Quitegood - publish client
+
+# Takes the binaries from the "qg-build" pre-release and publishes them as the latest release
+# with fixed names (used by https://support.quitegood.be/download/*).
+# If the Apple Silicon build is missing (GitHub macOS arm64 capacity), the Intel dmg is published
+# under the Apple Silicon name: it runs on M-series Macs through Rosetta 2.
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    branches: ["qg-publish"]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Collect build outputs
+        run: |
+          set -euo pipefail
+          mkdir out && cd out
+          gh release download qg-build -R "$GITHUB_REPOSITORY" -p 'rustdesk-*'
+          ls -l
+          NOTE=""
+          cp rustdesk-*-x86_64.exe ../QuitegoodSupport-Windows.exe
+          cp rustdesk-*-x86_64.msi ../QuitegoodSupport-Windows.msi
+          cp rustdesk-*-x86_64.dmg ../QuitegoodSupport-macOS-Intel.dmg
+          if ls rustdesk-*-aarch64.dmg >/dev/null 2>&1; then
+            cp rustdesk-*-aarch64.dmg ../QuitegoodSupport-macOS-AppleSilicon.dmg
+          else
+            cp rustdesk-*-x86_64.dmg ../QuitegoodSupport-macOS-AppleSilicon.dmg
+            NOTE="Note: the Apple Silicon file is the Intel build (runs through Rosetta 2) until a native arm64 build is available."
+          fi
+          cd .. && sha256sum QuitegoodSupport-* > SHA256SUMS.txt && cat SHA256SUMS.txt
+          echo "NOTE=$NOTE" >> "$GITHUB_ENV"
+
+      - name: Publish as latest release
+        run: |
+          set -euo pipefail
+          TAG="qg-$(date -u +%Y%m%d-%H%M)"
+          gh release create "$TAG" -R "$GITHUB_REPOSITORY" --latest --target "$GITHUB_SHA" \
+            --title "Quitegood Support $TAG" \
+            --notes "Client RustDesk Quitegood (support.quitegood.be, WebSocket/443). ${NOTE} Source: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_SHA}" \
+            QuitegoodSupport-* SHA256SUMS.txt
