@@ -1,0 +1,38 @@
+name: Quitegood - build hbbs (WebSocket registration)
+
+# rustdesk-server (AGPL-3.0) + Quitegood patch: peers may register over TCP/WebSocket
+# (RegisterPk + heartbeat on a persistent connection), so clients work with TCP 443 only.
+# Produces a static x86_64 musl hbbs, published in the "qg-server" release.
+
+on:
+  push:
+    branches: ["qg-server"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Toolchain
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y musl-tools
+          rustup toolchain install stable --profile minimal
+          rustup target add x86_64-unknown-linux-musl
+      - name: Build
+        run: |
+          cargo build --release --locked --target x86_64-unknown-linux-musl --bin hbbs
+          B=target/x86_64-unknown-linux-musl/release/hbbs
+          file $B; ldd $B || true
+          cp $B hbbs-x86_64-musl && sha256sum hbbs-x86_64-musl | tee hbbs-x86_64-musl.sha256
+      - name: Publish
+        run: |
+          gh release view qg-server -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 || \
+            gh release create qg-server -R "$GITHUB_REPOSITORY" --prerelease --title "Quitegood hbbs (WebSocket registration)" --notes "Patched hbbs, see branch qg-server."
+          gh release upload qg-server hbbs-x86_64-musl hbbs-x86_64-musl.sha256 -R "$GITHUB_REPOSITORY" --clobber
+          gh release edit qg-server -R "$GITHUB_REPOSITORY" --notes "Patched hbbs from ${GITHUB_SHA} (rustdesk-server 680b603 + WebSocket registration)."
