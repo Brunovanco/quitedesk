@@ -80,3 +80,7 @@ strip = true
 
 [patch.crates-io]
 tungstenite = { git = "https://github.com/rustdesk-org/tungstenite-rs", rev = "efce47e5364f00a63302cf07ab1fb13ded478914" }
+
+# Quitegood: static OpenSSL for the x86_64 musl build (hbb_common uses native-tls on Linux)
+[target.'cfg(target_os = "linux")'.dependencies]
+openssl = { version = "0.10", features = ["vendored"] }
