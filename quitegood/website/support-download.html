@@ -1,0 +1,43 @@
+<!-- Quitegood Support - bloc de téléchargement (Odoo : bloc "Code intégré" / Embed code) -->
+<div id="qg-support" style="max-width:720px;margin:0 auto;padding:24px;font-family:inherit;text-align:center">
+  <h2 style="margin-bottom:8px">Assistance à distance Quitegood</h2>
+  <p style="margin-bottom:24px">Téléchargez le module d'assistance, ouvrez-le, puis communiquez-nous
+     l'<strong>ID</strong> et le <strong>mot de passe</strong> affichés. Rien d'autre à configurer.</p>
+
+  <a id="qg-main" class="btn btn-primary btn-lg" style="min-width:320px;margin-bottom:16px"
+     href="https://support.quitegood.be/download/windows">Télécharger pour Windows</a>
+  <p id="qg-hint" style="font-size:0.9em;opacity:.8"></p>
+
+  <p style="font-size:0.9em;margin-top:16px">Autres versions :
+    <a href="https://support.quitegood.be/download/windows">Windows</a> ·
+    <a href="https://support.quitegood.be/download/windows-msi">Windows (MSI, déploiement)</a> ·
+    <a href="https://support.quitegood.be/download/mac">Mac Apple Silicon (M1–M4)</a> ·
+    <a href="https://support.quitegood.be/download/mac-intel">Mac Intel</a>
+  </p>
+</div>
+<script>
+(function () {
+  var b = document.getElementById('qg-main'), h = document.getElementById('qg-hint');
+  var ua = navigator.userAgent || '', plat = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+  function setMac(url, label) {
+    b.href = url; b.textContent = label;
+    h.innerHTML = "Ouvrez le fichier .dmg et glissez l'application dans Applications. "
+      + "Au premier lancement : clic droit &rarr; <em>Ouvrir</em>, puis autorisez "
+      + "<em>Enregistrement de l'écran</em> et <em>Accessibilité</em> dans Réglages Système.";
+  }
+  if (/Mac/i.test(plat) || /Macintosh/i.test(ua)) {
+    setMac('https://support.quitegood.be/download/mac', 'Télécharger pour Mac');
+    // Distinguish Apple Silicon from Intel when the browser exposes it
+    if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+      navigator.userAgentData.getHighEntropyValues(['architecture']).then(function (v) {
+        if (v.architecture === 'x86') setMac('https://support.quitegood.be/download/mac-intel', 'Télécharger pour Mac (Intel)');
+      });
+    }
+  } else if (/Win/i.test(plat) || /Windows/i.test(ua)) {
+    h.innerHTML = "Lancez le fichier téléchargé. Si Windows affiche « Windows a protégé votre ordinateur », "
+      + "cliquez sur <em>Informations complémentaires</em> &rarr; <em>Exécuter quand même</em>.";
+  } else {
+    h.textContent = "Ce module est disponible pour Windows et macOS.";
+  }
+})();
+</script>

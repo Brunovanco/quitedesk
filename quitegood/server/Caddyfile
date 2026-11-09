@@ -16,6 +16,13 @@ support.quitegood.be {
 	handle /api/* {
 		respond 404
 	}
+	# Fixed download links for the website -> latest GitHub release of the fork
+	# (replace OWNER/REPO by the fork, e.g. quitegood/rustdesk)
+	redir /download/windows     https://github.com/OWNER/REPO/releases/latest/download/QuitegoodSupport-Windows.exe 302
+	redir /download/windows-msi https://github.com/OWNER/REPO/releases/latest/download/QuitegoodSupport-Windows.msi 302
+	redir /download/mac         https://github.com/OWNER/REPO/releases/latest/download/QuitegoodSupport-macOS-AppleSilicon.dmg 302
+	redir /download/mac-intel   https://github.com/OWNER/REPO/releases/latest/download/QuitegoodSupport-macOS-Intel.dmg 302
+
 	# Anything else: send people to the download page
 	handle {
 		redir https://www.quitegood.be/support 302
