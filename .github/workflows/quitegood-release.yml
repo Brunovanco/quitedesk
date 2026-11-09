@@ -11,6 +11,7 @@ on:
   workflow_dispatch:
   push:
     tags: ["qg-v*"]
+    branches: ["qg-release"]   # push quitegood -> qg-release to publish a new client
 
 permissions:
   contents: write

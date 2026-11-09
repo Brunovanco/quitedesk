@@ -19,7 +19,7 @@ Le nom interne de l'application reste « RustDesk », volontairement : sur macOS
 1. Forker le dépôt sur GitHub, puis y pousser la branche `quitegood` (comme branche par défaut).
 2. Dans **Settings → Actions → General**, activer les Actions et choisir **Workflow permissions : Read and write**.
 3. La clé du serveur est déjà dans `quitegood/settings.json`. Si le serveur change de clé, mettre la nouvelle dans ce fichier, ou dans la variable de dépôt `QG_SERVER_KEY`.
-4. Dans **Actions → « Quitegood - release client » → Run workflow**, lancer la compilation (environ 1 h à 1 h 30). Une alternative : pousser un tag `qg-v1.0.0`.
+4. Dans **Actions → « Quitegood - release client » → Run workflow**, lancer la compilation (environ 1 h à 1 h 30). Une alternative : pousser la branche `quitegood` sur `qg-release` (`git push origin quitegood:qg-release`) ou un tag `qg-v1.0.0`.
 5. Les fichiers sont publiés sous des noms fixes dans la dernière release :
    `QuitegoodSupport-Windows.exe`, `QuitegoodSupport-Windows.msi`, `QuitegoodSupport-macOS-AppleSilicon.dmg` et `QuitegoodSupport-macOS-Intel.dmg`.
 
