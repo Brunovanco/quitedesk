@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quitegood Support – Assistance à distance</title>
+<meta name="description" content="Téléchargez le module d'assistance à distance Quitegood pour Windows ou macOS.">
+<link rel="icon" type="image/png" href="icon.png">
+<style>
+  :root {
+    --blue: #0a2bb4;
+    --blue-dark: #071f86;
+    --green: #43b23a;
+    --ink: #101a33;
+    --muted: #5b6478;
+    --line: #e3e7f0;
+    --bg: #f4f6fb;
+    --card: #ffffff;
+    --soft: #eef1fa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #eef1f8;
+      --muted: #a3abbd;
+      --line: #273050;
+      --bg: #0c1122;
+      --card: #141b33;
+      --soft: #1b2442;
+      --blue: #3d63ff;
+      --blue-dark: #2c4fe0;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 500px at 50% -200px, color-mix(in srgb, var(--blue) 14%, transparent), transparent),
+      var(--bg);
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 32px 16px 24px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .lang { align-self: flex-end; max-width: 760px; width: 100%; display: flex; justify-content: flex-end; gap: 4px; margin-bottom: 8px; }
+  .lang button {
+    font: inherit; font-size: 13px; font-weight: 600; letter-spacing: .04em;
+    color: var(--muted); background: none; border: 0; padding: 6px 8px; border-radius: 6px; cursor: pointer;
+  }
+  .lang button[aria-pressed="true"] { color: var(--blue); background: var(--soft); }
+  main {
+    width: 100%; max-width: 760px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    box-shadow: 0 20px 50px -24px rgba(10, 43, 180, .25);
+    padding: 44px 48px 40px; text-align: center;
+  }
+  .logo { width: 260px; max-width: 70%; height: auto; display: block; margin: 0 auto 28px; }
+  .logo-dark { display: none; }
+  h1 { font-size: clamp(26px, 4vw, 34px); line-height: 1.15; margin: 0 0 10px; letter-spacing: -.01em; }
+  .lead { color: var(--muted); font-size: 17px; line-height: 1.5; margin: 0 auto 32px; max-width: 520px; }
+
+  .cta {
+    display: inline-flex; align-items: center; gap: 14px;
+    background: var(--blue); color: #fff; text-decoration: none;
+    padding: 18px 30px 18px 24px; border-radius: 14px;
+    font-size: 19px; font-weight: 650;
+    box-shadow: 0 10px 24px -10px var(--blue);
+    transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
+  }
+  .cta:hover { background: var(--blue-dark); transform: translateY(-1px); }
+  .cta:focus-visible, .alt a:focus-visible, .lang button:focus-visible, summary:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+  .cta svg { width: 26px; height: 26px; flex: none; }
+  .cta small { display: block; font-size: 13px; font-weight: 500; opacity: .8; margin-top: 2px; text-align: left; }
+  .cta span { text-align: left; }
+
+  .alt { margin: 22px 0 0; font-size: 14px; color: var(--muted); }
+  .alt a { color: var(--blue); text-decoration: none; font-weight: 600; white-space: nowrap; padding: 2px 4px; border-radius: 4px; }
+  .alt a:hover { text-decoration: underline; }
+  .alt .sep { opacity: .5; margin: 0 4px; }
+
+  .steps { list-style: none; padding: 0; margin: 40px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; text-align: left; }
+  .steps li { background: var(--soft); border-radius: 14px; padding: 18px 18px 16px; }
+  .num {
+    width: 30px; height: 30px; border-radius: 50%; background: var(--green); color: #fff;
+    display: grid; place-items: center; font-weight: 700; font-size: 15px; margin-bottom: 10px;
+  }
+  .steps strong { display: block; font-size: 15px; margin-bottom: 4px; }
+  .steps p { margin: 0; font-size: 14px; line-height: 1.45; color: var(--muted); }
+
+  details { margin-top: 26px; text-align: left; border: 1px solid var(--line); border-radius: 14px; padding: 0 18px; }
+  summary { cursor: pointer; font-weight: 600; font-size: 15px; padding: 16px 0; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-size: 20px; color: var(--muted); }
+  details[open] summary::after { content: "–"; }
+  details ol { margin: 0 0 18px; padding-left: 20px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+  details ol b { color: var(--ink); font-weight: 600; }
+
+  .trust { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 22px; margin-top: 28px; font-size: 13px; color: var(--muted); }
+  .trust span::before { content: "✓"; color: var(--green); font-weight: 700; margin-right: 6px; }
+
+  footer { margin-top: 22px; font-size: 13px; color: var(--muted); text-align: center; line-height: 1.6; }
+  footer a { color: inherit; }
+
+  @media (prefers-color-scheme: dark) {
+    img.logo-light { display: none; }
+    img.logo-dark { display: block; }
+  }
+  @media (max-width: 640px) {
+    main { padding: 32px 20px 28px; border-radius: 16px; }
+    .steps { grid-template-columns: 1fr; }
+    .cta { width: 100%; justify-content: center; padding: 16px 18px; font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+  <nav class="lang" aria-label="Langue">
+    <button data-lang="fr">FR</button><button data-lang="nl">NL</button><button data-lang="en">EN</button>
+  </nav>
+
+  <main>
+    <img class="logo logo-light" src="logo.png" alt="Quitegood" width="480" height="96">
+    <img class="logo logo-dark" src="logo_dark.png" alt="Quitegood" width="480" height="96">
+
+    <h1 data-i18n="title">Assistance à distance</h1>
+    <p class="lead" data-i18n="lead">Un technicien Quitegood vous aide directement sur votre écran. Téléchargez le module, ouvrez-le, c'est tout.</p>
+
+    <a id="cta" class="cta" href="/download/windows">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+      <span><span id="cta-label">Télécharger pour Windows</span><small id="cta-sub">Windows 10 / 11 · 64 bits</small></span>
+    </a>
+
+    <p class="alt">
+      <span data-i18n="other">Autres systèmes :</span>
+      <a href="/download/windows">Windows</a><span class="sep">·</span>
+      <a href="/download/mac" data-i18n="macArm">Mac (Apple M1–M4)</a><span class="sep">·</span>
+      <a href="/download/mac-intel" data-i18n="macIntel">Mac (Intel)</a><span class="sep">·</span>
+      <a href="/download/windows-msi" data-i18n="msi">Windows MSI (IT)</a>
+    </p>
+
+    <ol class="steps">
+      <li><div class="num">1</div><strong data-i18n="s1t">Téléchargez</strong><p data-i18n="s1">Cliquez sur le bouton ci-dessus.</p></li>
+      <li><div class="num">2</div><strong data-i18n="s2t">Ouvrez</strong><p id="s2" data-i18n="s2win">Lancez le fichier téléchargé. Aucune installation n'est nécessaire.</p></li>
+      <li><div class="num">3</div><strong data-i18n="s3t">Communiquez</strong><p data-i18n="s3">Donnez au technicien l'<b>ID</b> et le <b>mot de passe</b> affichés.</p></li>
+    </ol>
+
+    <details id="help">
+      <summary id="help-title" data-i18n="helpWin">Windows affiche un avertissement ?</summary>
+      <ol id="help-body"></ol>
+    </details>
+
+    <div class="trust">
+      <span data-i18n="t1">Connexion chiffrée</span>
+      <span data-i18n="t2">Serveur Quitegood en Europe</span>
+      <span data-i18n="t3">Rien ne se passe sans votre accord</span>
+    </div>
+  </main>
+
+  <footer>
+    Quitegood · <a href="mailto:info@quitegood.be">info@quitegood.be</a> · <a href="https://www.quitegood.be">www.quitegood.be</a>
+  </footer>
+
+<script>
+(function () {
+  var T = {
+    fr: {
+      title: "Assistance à distance",
+      lead: "Un technicien Quitegood vous aide directement sur votre écran. Téléchargez le module, ouvrez-le, c'est tout.",
+      dl: "Télécharger pour", other: "Autres systèmes :",
+      macArm: "Mac (Apple M1–M4)", macIntel: "Mac (Intel)", msi: "Windows MSI (IT)",
+      subWin: "Windows 10 / 11 · 64 bits", subMac: "macOS · puces Apple M1 à M4", subMacIntel: "macOS · processeur Intel",
+      s1t: "Téléchargez", s1: "Cliquez sur le bouton ci-dessus.",
+      s2t: "Ouvrez",
+      s2win: "Lancez le fichier téléchargé. Aucune installation n'est nécessaire.",
+      s2mac: "Ouvrez le fichier .dmg et glissez l'application dans Applications.",
+      s3t: "Communiquez", s3: "Donnez au technicien l'<b>ID</b> et le <b>mot de passe</b> affichés.",
+      helpWin: "Windows affiche un avertissement ?", helpMac: "Premier lancement sur Mac",
+      winSteps: [
+        "Si « <b>Windows a protégé votre ordinateur</b> » s'affiche, cliquez sur <b>Informations complémentaires</b>.",
+        "Cliquez ensuite sur <b>Exécuter quand même</b>.",
+        "Si Windows demande une autorisation, répondez <b>Oui</b>."
+      ],
+      macSteps: [
+        "Dans Applications, faites un <b>clic droit</b> sur RustDesk puis <b>Ouvrir</b>, et confirmez.",
+        "Autorisez <b>Enregistrement de l'écran</b> et <b>Accessibilité</b> dans Réglages Système → Confidentialité et sécurité.",
+        "Quittez puis relancez l'application pour que les autorisations soient prises en compte."
+      ],
+      t1: "Connexion chiffrée", t2: "Serveur Quitegood en Europe", t3: "Rien ne se passe sans votre accord",
+      docTitle: "Quitegood Support – Assistance à distance"
+    },
+    nl: {
+      title: "Hulp op afstand",
+      lead: "Een technicus van Quitegood helpt u rechtstreeks op uw scherm. Download de module, open hem en klaar.",
+      dl: "Downloaden voor", other: "Andere systemen:",
+      macArm: "Mac (Apple M1–M4)", macIntel: "Mac (Intel)", msi: "Windows MSI (IT)",
+      subWin: "Windows 10 / 11 · 64-bit", subMac: "macOS · Apple-chips M1 tot M4", subMacIntel: "macOS · Intel-processor",
+      s1t: "Downloaden", s1: "Klik op de knop hierboven.",
+      s2t: "Openen",
+      s2win: "Start het gedownloade bestand. Installeren is niet nodig.",
+      s2mac: "Open het .dmg-bestand en sleep de app naar Programma's.",
+      s3t: "Doorgeven", s3: "Geef de technicus de getoonde <b>ID</b> en het <b>wachtwoord</b>.",
+      helpWin: "Toont Windows een waarschuwing?", helpMac: "Eerste keer openen op een Mac",
+      winSteps: [
+        "Verschijnt « <b>Windows heeft uw pc beschermd</b> », klik dan op <b>Meer informatie</b>.",
+        "Klik daarna op <b>Toch uitvoeren</b>.",
+        "Vraagt Windows om toestemming, antwoord dan <b>Ja</b>."
+      ],
+      macSteps: [
+        "Klik in Programma's met de <b>rechtermuisknop</b> op RustDesk, kies <b>Open</b> en bevestig.",
+        "Sta <b>Schermopname</b> en <b>Toegankelijkheid</b> toe in Systeeminstellingen → Privacy en beveiliging.",
+        "Sluit de app en open hem opnieuw zodat de toestemmingen actief worden."
+      ],
+      t1: "Versleutelde verbinding", t2: "Quitegood-server in Europa", t3: "Niets gebeurt zonder uw akkoord",
+      docTitle: "Quitegood Support – Hulp op afstand"
+    },
+    en: {
+      title: "Remote assistance",
+      lead: "A Quitegood technician helps you directly on your screen. Download the module, open it, and that's it.",
+      dl: "Download for", other: "Other systems:",
+      macArm: "Mac (Apple M1–M4)", macIntel: "Mac (Intel)", msi: "Windows MSI (IT)",
+      subWin: "Windows 10 / 11 · 64-bit", subMac: "macOS · Apple M1 to M4 chips", subMacIntel: "macOS · Intel processor",
+      s1t: "Download", s1: "Click the button above.",
+      s2t: "Open",
+      s2win: "Run the downloaded file. No installation needed.",
+      s2mac: "Open the .dmg file and drag the app into Applications.",
+      s3t: "Share", s3: "Give the technician the <b>ID</b> and <b>password</b> shown.",
+      helpWin: "Windows shows a warning?", helpMac: "First launch on a Mac",
+      winSteps: [
+        "If « <b>Windows protected your PC</b> » appears, click <b>More info</b>.",
+        "Then click <b>Run anyway</b>.",
+        "If Windows asks for permission, answer <b>Yes</b>."
+      ],
+      macSteps: [
+        "In Applications, <b>right-click</b> RustDesk, choose <b>Open</b> and confirm.",
+        "Allow <b>Screen Recording</b> and <b>Accessibility</b> in System Settings → Privacy & Security.",
+        "Quit and reopen the app so the permissions take effect."
+      ],
+      t1: "Encrypted connection", t2: "Quitegood server in Europe", t3: "Nothing happens without your consent",
+      docTitle: "Quitegood Support – Remote assistance"
+    }
+  };
+
+  // --- OS detection
+  var ua = navigator.userAgent || "";
+  var plat = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "";
+  var os = /Mac/i.test(plat) || /Macintosh/i.test(ua) ? "mac" : "win";
+  if (/iPhone|iPad|Android/i.test(ua)) os = "win"; // mobile: default to Windows, other links stay visible
+  var macKind = "arm"; // Apple Silicon by default (all Macs sold since 2021)
+
+  // --- Language
+  var lang;
+  try { lang = localStorage.getItem("qg-lang"); } catch (e) {}
+  if (!T[lang]) {
+    var nav = (navigator.language || "fr").slice(0, 2).toLowerCase();
+    lang = T[nav] ? nav : "fr";
+  }
+
+  function render() {
+    var t = T[lang];
+    document.documentElement.lang = lang;
+    document.title = t.docTitle;
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+      var k = el.getAttribute("data-i18n");
+      if (k === "s2win" || k === "helpWin") return; // OS-dependent, set below
+      if (t[k]) el.innerHTML = t[k];
+    });
+    document.querySelectorAll(".lang button").forEach(function (b) {
+      b.setAttribute("aria-pressed", b.dataset.lang === lang ? "true" : "false");
+    });
+    var cta = document.getElementById("cta");
+    if (os === "mac") {
+      cta.href = macKind === "intel" ? "/download/mac-intel" : "/download/mac";
+      document.getElementById("cta-label").textContent = t.dl + " Mac";
+      document.getElementById("cta-sub").textContent = macKind === "intel" ? t.subMacIntel : t.subMac;
+      document.getElementById("s2").innerHTML = t.s2mac;
+      document.getElementById("help-title").textContent = t.helpMac;
+      document.getElementById("help-body").innerHTML = t.macSteps.map(function (s) { return "<li>" + s + "</li>"; }).join("");
+    } else {
+      cta.href = "/download/windows";
+      document.getElementById("cta-label").textContent = t.dl + " Windows";
+      document.getElementById("cta-sub").textContent = t.subWin;
+      document.getElementById("s2").innerHTML = t.s2win;
+      document.getElementById("help-title").textContent = t.helpWin;
+      document.getElementById("help-body").innerHTML = t.winSteps.map(function (s) { return "<li>" + s + "</li>"; }).join("");
+    }
+  }
+
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      lang = b.dataset.lang;
+      try { localStorage.setItem("qg-lang", lang); } catch (e) {}
+      render();
+    });
+  });
+
+  render();
+
+  // Chromium browsers can tell Intel from Apple Silicon
+  if (os === "mac" && navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+    navigator.userAgentData.getHighEntropyValues(["architecture"]).then(function (v) {
+      if (v.architecture === "x86") { macKind = "intel"; render(); }
+    }).catch(function () {});
+  }
+})();
+</script>
+</body>
+</html>
